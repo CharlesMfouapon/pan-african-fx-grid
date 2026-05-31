@@ -1,0 +1,46 @@
+[package]
+name = "pan-african-fx-grid"
+version = "0.1.0"
+edition = "2021"
+description = "Decentralized FX liquidity mesh for African currency markets"
+license = "Apache-2.0"
+authors = ["Charles Mfouapon"]
+
+[dependencies]
+# Graph algorithms for arbitrage detection
+petgraph = "0.6"
+
+# Serialization
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+# Async runtime
+tokio = { version = "1", features = ["full"] }
+
+# Cryptography
+ed25519-dalek = { version = "2", features = ["serde"] }
+sha2 = "0.10"
+
+# Error handling
+thiserror = "1"
+anyhow = "1"
+
+# Logging
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["json"] }
+
+# Decimal precision
+rust_decimal = "1"
+rust_decimal_macros = "1"
+
+# HTTP client for rate feeds
+reqwest = { version = "0.11", features = ["json"] }
+
+[dev-dependencies]
+criterion = "0.5"
+proptest = "1"
+tokio-test = "0.4"
+
+[[bench]]
+name = "arbitrage_bench"
+harness = false
