@@ -77,3 +77,68 @@ Market rates are sourced from a hybrid oracle network:
   modified z-score thresholding
 
 ## System Architecture
+
+```
+
++-------------------+     +-------------------+     +-------------------+
+|  UEMOA Fragment   |     |  WAMZ Fragment    |     |  EAC Fragment     |
+|  (XOF-pegged)     |<--->|  (NGN, GHS, etc)  |<--->|  (KES, UGX, etc)  |
++-------------------+     +-------------------+     +-------------------+
+^                         ^                         ^
+|                         |                         |
+v                         v                         v
++-------------------------------------------------------------------+
+|                    ARBITRAGE DETECTION ENGINE                      |
+|  Graph-based cycle detection across currency pair digraph         |
++-------------------------------------------------------------------+
+|                         |                         |
+v                         v                         v
++-------------------------------------------------------------------+
+|                    MOBILE MONEY SETTLEMENT LAYER                   |
+|  MTN Money | Orange Money | M-Pesa | Wave | Moov Money           |
++-------------------------------------------------------------------+
+|                         |                         |
+v                         v                         v
++-------------------------------------------------------------------+
+|                    BFT CONSENSUS LAYER                             |
+|  Rate attestation | Liquidity commitment | Settlement proof       |
++-------------------------------------------------------------------+
+
+```
+
+## Currency Pair Graph Model
+
+The FX grid is modeled as a directed graph G = (V, E) where:
+- V = {XOF, XAF, NGN, GHS, KES, UGX, ZAR, USD, EUR, USDT, BTC}
+- E = {(c1, c2) | rate(c1 -> c2) exists}
+
+An arbitrage opportunity exists when:
+∏(rate(ci -> ci+1)) > 1 + ε for some cycle (c1, c2, ..., cn, c1)
+
+where ε accounts for transaction costs (mobile money fees, spread).
+
+## Security Model
+
+### Threat Model
+- **Malicious providers** may submit false rates to manipulate markets
+- **Network adversaries** may delay or drop messages between fragments
+- **Mobile money failures** may cause settlement disputes
+- **Regulatory risk** from varying legal frameworks across jurisdictions
+
+### Mitigations
+- **Rate submission requires stake** that can be slashed for provable dishonesty
+- **Consensus requires 2f+1 signatures** for any rate update
+- **Settlement proofs are cryptographically verifiable** using mobile money
+  provider transaction receipts
+- **Regulatory compliance** is delegated to licensed providers within each
+  jurisdiction
+
+## Performance Targets
+
+| Metric | Target | Rationale |
+|---|---|---|
+| Consensus finality | < 10 seconds | Acceptable for FX settlement |
+| Arbitrage detection | < 500ms | Faster than manual arbitrage |
+| Rate update frequency | 30 seconds | Sufficient for non-HFT markets |
+| Mobile money settlement | Provider-dependent | 30s - 24h depending on provider |
+| Cross-fragment latency | < 5 seconds | Inter-regional network latency |
