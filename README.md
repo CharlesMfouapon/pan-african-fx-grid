@@ -88,5 +88,5 @@ architectural design, threat model, and performance targets.
 
 Author: Charles Mfouapon
 
-Building financial infrastructure for African markets.
+<sub>Building financial infrastructure for African markets.</sub>
 
